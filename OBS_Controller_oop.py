@@ -1,6 +1,8 @@
 import obsws_python as obs
 import json
 import time
+
+
 class OBS_controller:
     
     def printJsonObject(self,object):
@@ -99,6 +101,12 @@ class OBS_controller:
             - attr:
                 + stream_service_type (String): Stream service type, like rtmp_custom or rtmp_common
                 + stream_service_settings(Object): Stream service settings
+                    -attr:
+                        + bwtest (Bool): bandwidth test option
+                        + key (String): stream key of rtmp protocol
+                        + protocol (String):  protocol is using
+                        + server (String): server is used
+                        + use_auth (Bool): use authentication or not
         """
         response =  self.request_client.get_stream_service_settings() 
         self.printJsonObject(response.stream_service_settings)
@@ -250,8 +258,8 @@ class OBS_controller:
         Set stream key an server to obs websocket
 
         Args:
-            streamkey (_type_): _description_
-            server (_type_): _description_
+            streamkey (String): streamkey of rtmp protocol
+            server (String): server name domain or ip
         """
         stream_service_type = "rtmp_custom"
         stream_service_settings = {
@@ -314,18 +322,28 @@ def main():
     pass
     
      
-def test():
+def test_for_failed_streamkey():
     my_obs = OBS_controller()
+    
+    my_obs.set_stream_service_key_server(streamkey="live_1044211682_Ol34MomAqRm3Ef7s0jwrKq0KNGj3Ku",server="rtmp://live.twitch.tv/app")
+    # my_obs.set_stream_service_key_server(streamkey="abs",server="rtmp://live.twitch.tv/app")
+    time.sleep(5)
+    my_obs.get_stream_service_settings()
+    my_obs.start_stream()
+    time.sleep(5)
     my_obs.get_stream_status()
-    print(f"stream is active : {my_obs.check_stream_is_active()}")
+    
+    
+    
+    # print(f"stream is active : {my_obs.check_stream_is_active()}")
     while True:
         try: 
             time.sleep(1)
         except KeyboardInterrupt:
-            # my_obs.stop_stream()
+            if my_obs.check_stream_is_active() :
+                my_obs.stop_stream()
             break
     
     
 if __name__ == "__main__":
-    test()
-        
+    test_for_failed_streamkey()
