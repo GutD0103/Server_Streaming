@@ -342,6 +342,7 @@ def test_for_failed_streamkey():
         except KeyboardInterrupt:
             if my_obs.check_stream_is_active() :
                 my_obs.stop_stream()
+                time.sleep(3)
             break
     
     
