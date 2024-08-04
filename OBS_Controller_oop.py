@@ -2,7 +2,7 @@ import obsws_python as obs
 import json
 import time
 
-
+from obsws_python.error import OBSSDKRequestError
 class OBS_controller:
     
     def printJsonObject(self,object):
@@ -13,7 +13,7 @@ class OBS_controller:
         for object in object_list:
             self.printJsonObject(object)
             
-    def __init__(self, host='10.128.89.78', port=4455, password='123456') -> None:
+    def __init__(self, host='172.28.182.84', port=4455, password='123456') -> None:
         # flag = False
         # # Đọc file config.txt
         # with open('config.txt', 'r') as file:
@@ -106,7 +106,8 @@ class OBS_controller:
         self.printJsonObject(response.scene_items)
         return response
 
-
+    def create_scene(self, _name):
+        self.request_client.create_scene(name=_name)
 
     def get_stream_service_settings(self):
         """
@@ -343,34 +344,25 @@ def main():
     
      
 def test_for_failed_streamkey():
-    my_obs1 = OBS_controller(port=4444,password="123456")
+    my_obs1 = OBS_controller(port=5454,password="123456")
+    my_obs1.create_scene("VTV3")
 
-    my_obs1.set_stream_service_key_server(streamkey="live_1039732177_vlmsO93WolB9ky2gidCbIfnEBMnXEk",server="rtmp://live.twitch.tv/app")
-    # my_obs.set_stream_service_key_server(streamkey="abs",server="rtmp://live.twitch.tv/app")
-    time.sleep(5)
-    my_obs1.get_stream_service_settings()
-    my_obs1.start_stream()
+    try:
+        my_obs1.create_scene("VTV3")
+    except OBSSDKRequestError as e:
+        if "A source already exists by that scene name" in str(e):
+            print("VTV3 already created")
+        else:
+            print(f"An error occurred: {e}")
+    
 
-    time.sleep(1)
-    my_obs1.get_stream_status()
-    print("STREAM LINK")
-    # my_obs1.set_input_playlist(["https://live3.thvli.vn/sJrg6YvmzZI2soZYl9hAnA/1713898152/thvli/thvl1-abr/thvl111220/thvl1-1080p/chunks.m3u8"])
-    time.sleep(2)
-    print("HIDDEN")
-    my_obs1.set_current_program_scene("Scene")
-    
-    # print(f"stream is active : {my_obs.check_stream_is_active()}")
-    while True:
-        try: 
-            time.sleep(1)
-        except KeyboardInterrupt:
-            if my_obs1.check_stream_is_active() :
-                my_obs1.stop_stream()
 
-            # if my_obs2.check_stream_is_active() :
-            #     my_obs2.stop_stream()
-            break
-    
-    
 if __name__ == "__main__":
-    test_for_failed_streamkey()
+    try:
+        test_for_failed_streamkey()
+    except Exception as e:
+        print(f"An unexpected error occurred in the main block: {e}")
+
+    while(1):
+        print("hahahha")
+        time.sleep(1)
