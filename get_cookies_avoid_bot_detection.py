@@ -12,7 +12,7 @@ def get_cookie(url, name):
     print (my_cookie)
     driver.close()
     # very importance if remove will raise an error
-    time.sleep(0.1)
+    time.sleep(1)
     return my_cookie.get("value") 
 
 if __name__ == "__main__" :
