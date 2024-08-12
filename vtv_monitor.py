@@ -43,14 +43,13 @@ class VTV_Monitor():
         cmd = [
             "streamlink",
             "--webbrowser-executable",  self.browser_path,
-            # "--http-cookie", f"aws-waf-token={aws_waf_token_cookie}",
+            "--http-cookie", f"aws-waf-token={aws_waf_token_cookie}",
             "--player-external-http-continuous", "0",
             "--player-external-http",
             "--player-external-http-port", self.port,
             self.url, "best"
         ]
         self.streamlink_process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-        host_process_not_finish = True
         while True:
             output = self.streamlink_process.stdout.readline()
             if output:
